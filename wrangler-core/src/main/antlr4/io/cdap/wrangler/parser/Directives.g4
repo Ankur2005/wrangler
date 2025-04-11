@@ -315,6 +315,14 @@ UnicodeEscape
 fragment
    HexDigit : ('0'..'9'|'a'..'f'|'A'..'F') ;
 
+byteSizeArg
+    : BYTE_SIZE
+    ;
+
+timeDurationArg
+    : TIME_DURATION
+    ;
+
 
 Comment
  : ('//' ~[\r\n]* | '/*' .*? '*/' | '--' ~[\r\n]* ) -> skip
