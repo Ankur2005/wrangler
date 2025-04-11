@@ -139,8 +139,10 @@ numberRange
  : Number ':' Number '=' value
  ;
 
+
+
 value
- : String | Number | Column | Bool
+ : String | Number | Column | Bool | BYTE_SIZE | TIME_DURATION
  ;
 
 ecommand
@@ -247,6 +249,24 @@ BackSlash: '\\';
 Dollar   : '$';
 Tilde    : '~';
 
+/*New lexer rules for Byte size and Time Duration Tokens*/
+
+BYTE_SIZE
+: (Digit)+ ('.' (Digit)+)? BYTE_UNIT
+;
+
+fragment BYTE_UNIT
+: 'KB' | 'MB' | 'GB' | 'TB' | 
+  'kb' | 'mb' | 'gb' | 'tb' |
+;
+
+TIME_DURATION
+: (Digit)+ ('.' (Digit)+)? TIME_UNIT
+;
+
+fragment TIME_UNIT
+: 'ms' | 's' | 'm' | 'h' 
+;
 
 Bool
  : 'true'
@@ -294,6 +314,7 @@ UnicodeEscape
 
 fragment
    HexDigit : ('0'..'9'|'a'..'f'|'A'..'F') ;
+
 
 Comment
  : ('//' ~[\r\n]* | '/*' .*? '*/' | '--' ~[\r\n]* ) -> skip
