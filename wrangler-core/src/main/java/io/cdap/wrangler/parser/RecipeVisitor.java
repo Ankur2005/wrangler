@@ -8,13 +8,23 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
  * License for the specific language governing permissions and limitations under
  * the License.
  */
 
 package io.cdap.wrangler.parser;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.misc.Interval;
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 import io.cdap.wrangler.api.LazyNumber;
 import io.cdap.wrangler.api.RecipeSymbol;
@@ -23,7 +33,6 @@ import io.cdap.wrangler.api.Triplet;
 import io.cdap.wrangler.api.parser.Bool;
 import io.cdap.wrangler.api.parser.BoolList;
 import io.cdap.wrangler.api.parser.ByteSize;
-import io.cdap.wrangler.api.parser.TimeDuration;
 import io.cdap.wrangler.api.parser.ColumnName;
 import io.cdap.wrangler.api.parser.ColumnNameList;
 import io.cdap.wrangler.api.parser.DirectiveName;
@@ -35,16 +44,8 @@ import io.cdap.wrangler.api.parser.Properties;
 import io.cdap.wrangler.api.parser.Ranges;
 import io.cdap.wrangler.api.parser.Text;
 import io.cdap.wrangler.api.parser.TextList;
+import io.cdap.wrangler.api.parser.TimeDuration;
 import io.cdap.wrangler.api.parser.Token;
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.misc.Interval;
-import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.TerminalNode;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This class <code>RecipeVisitor</code> implements the visitor pattern
@@ -356,7 +357,7 @@ public final class RecipeVisitor extends DirectivesBaseVisitor<RecipeSymbol.Buil
   @Override
   public RecipeSymbol.Builder visitByteSizeArg(DirectivesParser.ByteSizeArgContext ctx) {
     String text = ctx.getText();
-    builder.addToken(new Numeric(new LazyNumber(text)));
+    builder.addToken(new ByteSize(text));
     return builder;
   }
 
@@ -364,22 +365,24 @@ public final class RecipeVisitor extends DirectivesBaseVisitor<RecipeSymbol.Buil
   @Override
   public RecipeSymbol.Builder visitTimeDurationArg(DirectivesParser.TimeDurationArgContext ctx) {
     String text = ctx.getText();
-    builder.addToken(new Numeric(new LazyNumber(text)));
+    builder.addToken(new TimeDuration(text));
     return builder;
   }
 
   @Override
-  public RecipeSymbol.Builder visitValue(DirectivesParser.ValueContext ctx) {
-    if (ctx.BYTE_SIZE() != null) {
-      builder.addToken(new ByteSize(ctx.BYTE_SIZE().getText()));
-    } else if (ctx.TIME_DURATION() != null) {
-      builder.addToken(new TimeDuration(ctx.TIME_DURATION().getText()));
-    } else {
-      // Handle other value types
-      return super.visitValue(ctx);
-    }
-    return builder;
+public RecipeSymbol.Builder visitValue(DirectivesParser.ValueContext ctx) {
+  // Since value alternatives are tokens here, check the text type.
+  if (ctx.getChild(0).getText().matches(".*(KB|MB|GB|TB|kb|mb|gb|tb)$")) {
+    builder.addToken(new ByteSize(ctx.getChild(0).getText()));
+  } else if (ctx.getChild(0).getText().matches(".*(ms|s|m|h)$")) {
+    builder.addToken(new TimeDuration(ctx.getChild(0).getText()));
+  } else {
+    // Handle other value types.
+    return super.visitValue(ctx);
   }
+  return builder;
+}
+
 
   private SourceInfo getOriginalSource(ParserRuleContext ctx) {
     int a = ctx.getStart().getStartIndex();

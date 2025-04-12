@@ -142,7 +142,7 @@ numberRange
 
 
 value
- : String | Number | Column | Bool | BYTE_SIZE | TIME_DURATION
+ : String | Number | Column | Bool | byteSizeArg | timeDurationArg
  ;
 
 ecommand

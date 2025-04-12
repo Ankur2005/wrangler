@@ -20,8 +20,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import io.cdap.wrangler.api.annotations.PublicEvolving;
 
+
+
+/**
+ * Represents a byte size token used in parsing.
+ */
 @PublicEvolving
-public class ByteSize implements Token{
+public class ByteSize implements Token {
     private final double value;
     private final String unit;
 
@@ -68,4 +73,7 @@ public class ByteSize implements Token{
     public String toString() {
         return value + unit;
     }
+
 }
+
+

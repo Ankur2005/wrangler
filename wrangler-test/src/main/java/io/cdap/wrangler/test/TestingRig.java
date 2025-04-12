@@ -46,13 +46,12 @@ public final class TestingRig {
   }
 
   public static RecipePipeline pipeline(Class<? extends Directive> directive, TestRecipe recipe)
-    throws RecipeException, DirectiveParseException, DirectiveLoadException {
+      throws RecipeException, DirectiveParseException, DirectiveLoadException {
     verify(directive);
     List<String> packages = new ArrayList<>();
     packages.add(directive.getPackage().getName());
     CompositeDirectiveRegistry registry = new CompositeDirectiveRegistry(
-      new SystemDirectiveRegistry(packages)
-    );
+        new SystemDirectiveRegistry(packages));
 
     String migrate = new MigrateToV2(recipe.toArray()).migrate();
     RecipeParser parser = new GrammarBasedParser(Contexts.SYSTEM, migrate, registry);
@@ -60,13 +59,12 @@ public final class TestingRig {
   }
 
   public static RecipeParser parser(Class<? extends Directive> directive, String[] recipe)
-    throws DirectiveParseException, DirectiveLoadException {
+      throws DirectiveParseException, DirectiveLoadException {
     verify(directive);
     List<String> packages = new ArrayList<>();
     packages.add(directive.getCanonicalName());
     CompositeDirectiveRegistry registry = new CompositeDirectiveRegistry(
-      SystemDirectiveRegistry.INSTANCE
-    );
+        SystemDirectiveRegistry.INSTANCE);
 
     String migrate = new MigrateToV2(recipe).migrate();
     return new GrammarBasedParser(Contexts.SYSTEM, migrate, registry);
@@ -77,24 +75,21 @@ public final class TestingRig {
     Plugin plugin = directive.getAnnotation(Plugin.class);
     if (plugin == null || !plugin.type().equalsIgnoreCase(Directive.TYPE)) {
       throw new IllegalArgumentException(
-        String.format("Class '%s' @Plugin annotation is not of type '%s', Set it as @Plugin(type=UDD.Type)",
-                      classz, Directive.TYPE)
-      );
+          String.format("Class '%s' @Plugin annotation is not of type '%s', Set it as @Plugin(type=UDD.Type)",
+              classz, Directive.TYPE));
     }
 
     Name name = directive.getAnnotation(Name.class);
     if (name == null) {
       throw new IllegalArgumentException(
-        String.format("Class '%s' is missing @Name annotation. E.g. @Name(\"directive-name\")", classz)
-      );
+          String.format("Class '%s' is missing @Name annotation. E.g. @Name(\"directive-name\")", classz));
     }
 
     Description description = directive.getAnnotation(Description.class);
     if (description == null) {
       throw new IllegalArgumentException(
-        String.format("Class '%s' is missing @Description annotation. " +
-                        "E.g. @Description(\"this is what my directive does\")", classz)
-      );
+          String.format("Class '%s' is missing @Description annotation. " +
+              "E.g. @Description(\"this is what my directive does\")", classz));
     }
   }
 

@@ -19,7 +19,9 @@ package io.cdap.wrangler.api.parser;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 // import io.cdap.wrangler.api.annotations.PublicEvolving;
-
+/**
+ * Represents a time duration token used in parsing.
+ */
 public class TimeDuration implements Token {
     private final String value;
 
@@ -41,4 +43,6 @@ public class TimeDuration implements Token {
     public JsonElement toJson() {
         return new JsonPrimitive(value);
     }
+
 }
+
