@@ -354,34 +354,12 @@ public final class RecipeVisitor extends DirectivesBaseVisitor<RecipeSymbol.Buil
 
   /* making visitByteSizeArg */
 
-  @Override
-  public RecipeSymbol.Builder visitByteSizeArg(DirectivesParser.ByteSizeArgContext ctx) {
-    String text = ctx.getText();
-    builder.addToken(new ByteSize(text));
-    return builder;
-  }
+
 
   /* making visitTimeDurationArgs */
-  @Override
-  public RecipeSymbol.Builder visitTimeDurationArg(DirectivesParser.TimeDurationArgContext ctx) {
-    String text = ctx.getText();
-    builder.addToken(new TimeDuration(text));
-    return builder;
-  }
+  
 
-  @Override
-public RecipeSymbol.Builder visitValue(DirectivesParser.ValueContext ctx) {
-  // Since value alternatives are tokens here, check the text type.
-  if (ctx.getChild(0).getText().matches(".*(KB|MB|GB|TB|kb|mb|gb|tb)$")) {
-    builder.addToken(new ByteSize(ctx.getChild(0).getText()));
-  } else if (ctx.getChild(0).getText().matches(".*(ms|s|m|h)$")) {
-    builder.addToken(new TimeDuration(ctx.getChild(0).getText()));
-  } else {
-    // Handle other value types.
-    return super.visitValue(ctx);
-  }
-  return builder;
-}
+  
 
 
   private SourceInfo getOriginalSource(ParserRuleContext ctx) {

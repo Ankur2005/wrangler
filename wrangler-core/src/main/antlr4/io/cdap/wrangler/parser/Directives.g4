@@ -251,13 +251,13 @@ Tilde    : '~';
 
 /*New lexer rules for Byte size and Time Duration Tokens*/
 
-BYTE_SIZE
-: (Digit)+ ('.' (Digit)+)? BYTE_UNIT
-;
+BYTE_SIZE 
+    : (Digit)+ ('.' (Digit)+)? BYTE_UNIT
+    ;
 
 fragment BYTE_UNIT
 : 'KB' | 'MB' | 'GB' | 'TB' | 
-  'kb' | 'mb' | 'gb' | 'tb' |
+  'kb' | 'mb' | 'gb' | 'tb' 
 ;
 
 TIME_DURATION
